@@ -56,9 +56,6 @@ int tfb_acquire_fb(u32 flags, const char *fb_device, const char *tty_device)
    if (!fb_device)
       fb_device = DEFAULT_FB_DEVICE;
 
-   if (!tty_device)
-      tty_device = DEFAULT_TTY_DEVICE;
-
    fbfd = open(fb_device, O_RDWR);
 
    if (fbfd < 0) {
@@ -90,14 +87,16 @@ int tfb_acquire_fb(u32 flags, const char *fb_device, const char *tty_device)
       goto out;
    }
 
-   __tfb_ttyfd = open(tty_device, O_RDWR);
-
-   if (__tfb_ttyfd < 0) {
-      ret = TFB_ERR_OPEN_TTY;
-      goto out;
-   }
-
    if (!(flags & TFB_FL_NO_TTY_KD_GRAPHICS)) {
+      if (!tty_device)
+         tty_device = DEFAULT_TTY_DEVICE;
+
+      __tfb_ttyfd = open(tty_device, O_RDWR);
+
+      if (__tfb_ttyfd < 0) {
+         ret = TFB_ERR_OPEN_TTY;
+         goto out;
+      }
 
       if (ioctl(__tfb_ttyfd, KDSETMODE, KD_GRAPHICS) != 0) {
          ret = TFB_ERR_TTY_GRAPHIC_MODE;
@@ -215,7 +214,7 @@ void tfb_flush_window(void)
 }
 
 int tfb_flush_fb(void)
-{ 
+{
    __fbi.activate |= FB_ACTIVATE_NOW | FB_ACTIVATE_FORCE;
    if(ioctl(fbfd, FBIOPUT_VSCREENINFO, &__fbi) < 0) {
       return TFB_ERR_FB_FLUSH_IOCTL_FAILED;
