@@ -129,7 +129,12 @@ int tfb_set_window(u32 x, u32 y, u32 w, u32 h);
   */
 int tfb_set_center_window_size(u32 w, u32 h);
 
-
+/**
+ * Get the framebuffer device rotation
+ *
+ * @return          Rotation in degrees (0, 90, 180, 270) or -1 on failure.
+ */
+int tfb_get_rotation(void);
 
 /*
  * ----------------------------------------------------------------------------

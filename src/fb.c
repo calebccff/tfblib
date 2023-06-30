@@ -174,6 +174,11 @@ void tfb_release_fb(void)
       close(fbfd);
 }
 
+int tfb_get_rotation(void)
+{
+   return __fbi.rotate;
+}
+
 void tfb_flush_rect(int x, int y, int w, int h)
 {
    int yend;
